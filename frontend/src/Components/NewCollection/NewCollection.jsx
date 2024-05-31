@@ -8,7 +8,7 @@ const NewCollections = () => {
 
 
   useEffect(()=>{
-    fetch('http://localhost:4000/newcollections').then((res)=>res.json()).then((data)=>setNewCollection(data))
+    fetch('https://ecommerce-mern-nl0n.onrender.com/newcollections').then((res)=>res.json()).then((data)=>setNewCollection(data))
   },[])
 
   return (

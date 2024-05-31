@@ -12,7 +12,7 @@ const LoginSignup = () => {
   const login = async () => {
     // console.log("Login Function Executed", formData)
     let responseData;
-    await fetch('http://localhost:4000/login',{
+    await fetch('https://ecommerce-mern-nl0n.onrender.com/login',{
       method: 'POST',
       headers: {
         Accept: 'application/form-data',
@@ -33,7 +33,7 @@ const LoginSignup = () => {
   const signup = async () => {
     // console.log("Signup Function Executed", formData)
     let responseData;
-    await fetch('http://localhost:4000/signup', {
+    await fetch('https://ecommerce-mern-nl0n.onrender.com/signup', {
       method: 'POST',
       headers: {
         Accept: 'application/form-data',
