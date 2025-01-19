@@ -7,6 +7,9 @@ const bcrypt = require('bcryptjs');
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
+const Stripe = require("stripe");
+
+const stripe = new Stripe("your-secret-key");
 
 app.use(express.json());
 app.use(cors());
@@ -18,6 +21,35 @@ mongoose.connect("mongodb+srv://Zulquarnain:zulquar20112003@cluster0.fvihrvg.mon
 app.get("/", (req,res)=>{
     res.send("Express App is Running")
 })
+
+app.post("/create-checkout-session", async (req, res) => {
+    const { cartItems } = req.body;
+  
+    try {
+      const lineItems = cartItems.map(item => ({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: item.name,
+          },
+          unit_amount: item.new_price * 100, // Stripe requires amount in cents
+        },
+        quantity: item.quantity,
+      }));
+  
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: "payment",
+        success_url: "http://localhost:3000/success",
+        cancel_url: "http://localhost:3000/cancel",
+      });
+  
+      res.status(200).json({ url: session.url });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 // Image Storage Engine
 

@@ -1,5 +1,13 @@
 import React, { useState } from "react";
+import { analytics, logEvent } from "../config/firebase";
 import "./CSS/LoginSignup.css";
+
+const logEventToFirebase = () => {
+  logEvent(analytics, "button_click", {
+    button_name: "submit",
+  });
+};
+
 const LoginSignup = () => {
 
   const [state, setState] = useState("Login");
@@ -28,6 +36,7 @@ const LoginSignup = () => {
     else{
       alert(responseData.errors)
     }
+    logEventToFirebase();
 
   }
   const signup = async () => {
@@ -49,6 +58,7 @@ const LoginSignup = () => {
     else {
       alert(responseData.errors)
     }
+    logEventToFirebase();
   }
 
 
@@ -66,7 +76,7 @@ const LoginSignup = () => {
           <input name="email" value={formData.email} onChange={changeHandler} type="email" placeholder="Email Address" />
           <input name="password" value={formData.password} onChange={changeHandler} type="password" placeholder="Password" />
         </div>
-        <button type="submit" onClick={() => { state === "Login" ? login() : signup() }}>Continue</button>
+        <button type="submit"  onClick={() => { state === "Login" ? login() : signup() }  }>Continue</button>
         {state === "Sign Up" ?
           <p className="loginsignup-login">
             Already have an account <span style={{ cursor: "pointer" }} onClick={() => { setState("Login") }}>Login here</span>

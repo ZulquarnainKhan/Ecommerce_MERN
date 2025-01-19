@@ -2,10 +2,48 @@ import React, { useContext } from "react";
 import "./CartItems.css";
 import { ShopContext } from "../../Context/ShopContext";
 import remove_icon from "../Assets/cart_cross_icon.png";
+import { loadStripe } from "@stripe/stripe-js";
+
+
+
 
 const CartItems = () => {
   const { getTotalCartAmount, all_product, cartItems, removeFromCart } =
     useContext(ShopContext);
+
+    const stripePromise = loadStripe("your-publishable-key");
+
+    const handleCheckout = async () => {
+      const stripe = await stripePromise;
+    
+      // Create the cartItems array for the request
+      const checkoutItems = all_product
+        .filter((e) => cartItems[e.id] > 0)
+        .map((e) => ({
+          name: e.name,
+          new_price: e.new_price,
+          quantity: cartItems[e.id],
+        }));
+    
+      // Call your backend to create a Checkout session
+      const response = await fetch("http://localhost:3001/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cartItems: checkoutItems }),
+      });
+    
+      const data = await response.json();
+    
+      if (data.url) {
+        window.location.href = data.url; // Redirect to Stripe Checkout
+      } else {
+        console.error("Error creating Checkout session:", data.error);
+      }
+    };
+
+  
   return (
     <div className="cartitems">
       <div className="cartitems-format-main">
@@ -64,7 +102,7 @@ const CartItems = () => {
               <h3>${getTotalCartAmount()}</h3>
             </div>
           </div>
-          <button>PROCEED TO CHECKOUT</button>
+          <button >PROCEED TO CHECKOUT</button>
         </div>
         <div className="cartitems-promocode">
           <p>If you have a promo code, Enter it here</p>
